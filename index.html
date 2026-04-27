@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج احتساب الرواتب والبدلات</title>
+    <style>
+        * {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #2a7f6e;
+        }
+        
+        .header h1 {
+            color: #1e3c72;
+            font-size: 28px;
+            margin: 0;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52,152,219,0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-print {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+        
+        .btn-print:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card {
+            background: #f8f9fc;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #e1e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .flex-row > div {
+            flex: 1;
+        }
+        
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 8px 0;
+            color: #2c3e66;
+        }
+        
+        input, select {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 2px solid #e1e8f0;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2a7f6e;
+            box-shadow: 0 0 0 3px rgba(42,127,110,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: #2c3e66;
+            color: white;
+            padding: 14px;
+            font-weight: bold;
+        }
+        
+        td {
+            border: 1px solid #e1e8f0;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        tr:hover {
+            background: #f0f4fa;
+        }
+        
+        .total-row {
+            background: #d9e8f5;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            background: #eef2fa;
+        }
+        
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        
+        .warning {
+            color: #e74c3c;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #fef5f5;
+            text-align: center;
+        }
+        
+        .success {
+            color: #27ae60;
+            background: #eafaf1;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e1e8f0;
+            color: #888;
+            font-size: 13px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 15px;
+                max-width: 100%;
+            }
+            .btn-group, .btn, .delete-btn, .card:first-child .btn-group {
+                display: none !important;
+            }
+            .card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            input, select {
+                border: none;
+                background: transparent;
+                padding: 0;
+            }
+            .footer {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📊 برنامج احتساب الرواتب والبدلات</h1>
+    </div>
+    
+    <div class="btn-group">
+        <button class="btn btn-secondary" id="clearAllBtn">🗑️ مسح جميع البدلات</button>
+        <button class="btn btn-print" id="printBtn">🖨️ طباعة الصفحة</button>
+    </div>
+    
+    <div class="card">
+        <div class="flex-row">
+            <div>
+                <label>💰 إجمالي الراتب المستهدف:</label>
+                <input type="number" id="totalSalary" value="25000" step="500">
+            </div>
+            <div>
+                <label>🔧 بدل إضافي ثابت:</label>
+                <select id="fixedExtraToggle">
+                    <option value="auto">✅ مفعل (يُحتسب تلقائياً)</option>
+                    <option value="off">❌ غير مفعل</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h4 style="margin:0 0 15px 0; color:#2c3e66;">➕ إضافة بدل (قيمة ثابتة بالريال)</h4>
+        <div class="flex-row">
+            <div>
+                <select id="allowanceSelect">
+                    <option value="بدل سكن">🏠 بدل سكن</option>
+                    <option value="بدل مواصلات">🚗 بدل مواصلات</option>
+                    <option value="بدل إعاشة">🍽️ بدل إعاشة</option>
+                    <option value="بدل طبيعة عمل">⚙️ بدل طبيعة عمل</option>
+                    <option value="بدل محروقات">⛽ بدل محروقات</option>
+                    <option value="أخرى">📦 أخرى</option>
+                    <option value="بدل إنتاجية">🎯 بدل إنتاجية</option>
+                </select>
+            </div>
+            <div>
+                <input type="number" id="allowanceValue" placeholder="القيمة بالريال" step="any">
+            </div>
+            <div>
+                <button class="btn btn-secondary" id="addAllowanceBtn" style="width:100%; margin:0;">➕ إضافة البدل</button>
+            </div>
+        </div>
+    </div>
+    
+    <h3 style="color:#2c3e66;">🧾 تفاصيل الراتب</h3>
+    <table id="salaryTable">
+        <thead>
+            <tr>
+                <th>البند</th>
+                <th>طريقة الاحتساب</th>
+                <th>القيمة (ريال)</th>
+                <th>حذف</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr>
+                <td colspan="4" style="text-align:center; color:#888;">📌 لا توجد بدلات مضافة. أضف بدلاً جديداً من الأعلى</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="2"><strong>المجموع الكلي</strong></td>
+                <td id="totalDisplay"><strong>0</strong></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+    <div id="warningMsg" class="warning" style="display:none;"></div>
+    
+    <div class="footer">
+        تم إنشاء البرنامج بواسطة محمد مبروك عطية © 2026
+    </div>
+</div>
+
+<script>
+    let allowances = [];
+    
+    const totalInput = document.getElementById('totalSalary');
+    const fixedToggle = document.getElementById('fixedExtraToggle');
+    const allowanceSelect = document.getElementById('allowanceSelect');
+    const allowanceValueInput = document.getElementById('allowanceValue');
+    const addBtn = document.getElementById('addAllowanceBtn');
+    const tableBody = document.getElementById('tableBody');
+    const totalDisplaySpan = document.getElementById('totalDisplay');
+    const warningDiv = document.getElementById('warningMsg');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const printBtn = document.getElementById('printBtn');
+    
+    function getTotal() { return Math.round(parseFloat(totalInput.value) || 0); }
+    function isFixedEnabled() { return fixedToggle.value === 'auto'; }
+    
+    function calcFixedExtra(basicSalary) {
+        if (!isFixedEnabled()) return 0;
+        if (basicSalary <= 0) return 0;
+        return Math.round((basicSalary / 30) / 9 * 1.5 * 78);
+    }
+    
+    function calculateBasic() {
+        const total = getTotal();
+        const sumAllowances = allowances.reduce((sum, a) => sum + (Math.round(parseFloat(a.value)) || 0), 0);
+        
+        if (!isFixedEnabled()) {
+            let basic = total - sumAllowances;
+            return basic > 0 ? Math.round(basic) : 0;
+        } else {
+            let basic = (total - sumAllowances) / 1.43333333333;
+            return basic > 0 ? Math.round(basic) : 0;
+        }
+    }
+    
+    function renderTable() {
+        const total = getTotal();
+        const basic = calculateBasic();
+        const fixedExtra = calcFixedExtra(basic);
+        const sumAllowances = allowances.reduce((s, a) => s + (Math.round(parseFloat(a.value)) || 0), 0);
+        
+        let rows = [];
+        
+        rows.push({
+            name: '⭐ الراتب الأساسي',
+            calculation: 'المتبقي بعد خصم جميع البدلات' + (isFixedEnabled() ? ' (مع مراعاة بدل إضافي ثابت)' : ''),
+            value: basic,
+            isBasic: true
+        });
+        
+        allowances.forEach((a, idx) => {
+            rows.push({
+                name: a.name,
+                calculation: 'قيمة ثابتة',
+                value: Math.round(parseFloat(a.value)) || 0,
+                idx: idx,
+                canDelete: true
+            });
+        });
+        
+        if (isFixedEnabled() && basic > 0) {
+            rows.push({
+                name: '🔧 بدل إضافي ثابت',
+                calculation: '(الراتب الأساسي ÷ 30 ÷ 9 × 1.5 × 78)',
+                value: fixedExtra,
+                isFixed: true
+            });
+        }
+        
+        let html = '';
+        rows.forEach(row => {
+            html += `<tr class="${row.isBasic ? 'highlight' : ''}">
+                        <td>${row.name}</td>
+                        <td>${row.calculation}</td>
+                        <td><strong>${row.value.toLocaleString()}</strong></td>
+                        <td>${row.canDelete ? `<button class="delete-btn" data-idx="${row.idx}">🗑️ حذف</button>` : '—'}</td>
+                     </tr>`;
+        });
+        
+        if (allowances.length === 0 && !isFixedEnabled()) {
+            html = `<tr><td colspan="4" style="text-align:center; color:#888;">📌 لا توجد بدلات مضافة. أضف بدلاً جديداً من الأعلى</td></tr>${html}`;
+        }
+        
+        tableBody.innerHTML = html;
+        
+        let sum = basic + fixedExtra + sumAllowances;
+        totalDisplaySpan.innerText = sum.toLocaleString();
+        
+        if (allowances.length === 0 && !isFixedEnabled() && basic === total) {
+            warningDiv.style.display = 'block';
+            warningDiv.className = 'success';
+            warningDiv.innerHTML = `✅ الراتب الأساسي = ${basic.toLocaleString()} ريال (بدون بدلات إضافية)`;
+        } else if (Math.abs(sum - total) > 1) {
+            warningDiv.style.display = 'block';
+            warningDiv.className = 'warning';
+            warningDiv.innerHTML = `⚠️ المجموع (${sum.toLocaleString()}) ≠ الإجمالي المستهدف (${total.toLocaleString()}). الفرق = ${(sum - total).toLocaleString()} ريال`;
+        } else {
+            warningDiv.style.display = 'block';
+            warningDiv.className = 'success';
+            warningDiv.innerHTML = `✅ المجموع مطابق للإجمالي المستهدف (${total.toLocaleString()}). الراتب الأساسي = ${basic.toLocaleString()} ريال`;
+        }
+        
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let idx = parseInt(btn.getAttribute('data-idx'));
+                if (!isNaN(idx)) {
+                    allowances.splice(idx, 1);
+                    renderTable();
+                }
+            });
+        });
+    }
+    
+    function addAllowance() {
+        let name = allowanceSelect.value;
+        let value = Math.round(parseFloat(allowanceValueInput.value));
+        if (isNaN(value) || value === 0) {
+            alert("⚠️ الرجاء إدخال قيمة صحيحة بالريال");
+            return;
+        }
+        allowances.push({ name, value });
+        allowanceValueInput.value = '';
+        renderTable();
+    }
+    
+    function clearAll() {
+        if (confirm("هل أنت متأكد من مسح جميع البدلات؟")) {
+            allowances = [];
+            renderTable();
+        }
+    }
+    
+    function printPage() {
+        window.print();
+    }
+    
+    totalInput.addEventListener('input', renderTable);
+    fixedToggle.addEventListener('change', renderTable);
+    addBtn.addEventListener('click', addAllowance);
+    clearAllBtn.addEventListener('click', clearAll);
+    printBtn.addEventListener('click', printPage);
+    allowanceValueInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') addAllowance(); });
+    
+    // بداية فارغة تماماً بدون أي بيانات مخزنة
+    allowances = [];
+    renderTable();
+</script>
+</body>
+</html>
